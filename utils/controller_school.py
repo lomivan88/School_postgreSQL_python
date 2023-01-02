@@ -1,4 +1,4 @@
-from .data_model import PostgreHandler
+from .data_handler import PostgreHandler
 
 class ControllerSchool:
     def __init__(self, pg_model: PostgreHandler):
@@ -15,3 +15,14 @@ class ControllerSchool:
     def get_items(self):
         items = self.pg_model.get_data_all("items")
         return items
+    
+    def create_student(self, data = {"first_name":str, "second_name":str, "date_of_birth":str, "gender":str }):
+        self.pg_model.insert_data("students", data)
+    
+    def create_teacher(self, data= {"first_name":str, "second_name":str,  "title":str }):
+       returning_text = self.pg_model.insert_data("teachers", data)
+       return returning_text
+    
+    def create_item(self, data:dict):
+        returning_text = self.pg_model.insert_data("items", data)
+        return returning_text

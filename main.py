@@ -1,4 +1,4 @@
-from utils.data_model import PostgreHandler
+from utils.data_handler import PostgreHandler
 from utils.controller_school import ControllerSchool
 
 postgre_model = PostgreHandler(
@@ -15,5 +15,5 @@ if __name__ == "__main__":
     items = school_controller.get_items()
     # print(students)
     # print(teachers)
+    # school_controller.create_item({"item_name":"Czech Language", "teacher_id": 3, "description": "Firt level"})
     print(items)
-    

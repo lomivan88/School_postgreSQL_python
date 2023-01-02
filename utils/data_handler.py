@@ -34,7 +34,7 @@ class PostgreHandler:
                 ).format(
                     sql.Identifier(table),
                     sql.SQL(',').join(map(sql.Identifier, data.keys())),
-                    sql.SQL(',').join(map(sql.Literal,data.items()))   
+                    sql.SQL(',').join(map(sql.Literal,data.values()))   
                 )
                 cur.execute(insert_query)
                 inserted = cur.fetchone()
@@ -104,7 +104,65 @@ class PostgreHandler:
         self.connection.close()
         return result    
     
-    def join_table(self, table_a, table_b, table_a_id, table_b_id = None, table_c = None, table_c_id = None):
+    def join_table_select_dict(self, table_a, table_b, table_a_id, table_b_id = None, table_c = None, table_c_id = None):
+        result = []
+        if table_b_id == None:
+            table_b_id = table_a_id
+        
+        if self.connection == None or self.connection.closed:
+            self.connect()
+        
+        with self.connection, self.connection.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
+                try:
+                    if table_c == None:
+                        join_query = sql.SQL(
+                            """
+                            SELECT *
+                            FROM {}
+                            JOIN {} ON {}.{} = {}.{}
+                            """
+                        ).format(
+                            sql.Identifier(table_a),
+                            sql.Identifier(table_b),
+                            sql.Identifier(table_a),
+                            sql.Identifier(table_a_id),
+                            sql.Identifier(table_b),
+                            sql.Identifier(table_b_id)
+                        )
+                        cur.execute(join_query)
+                        result = cur.fetchall()
+                    else:
+                        if table_c_id == None:
+                            table_c_id = table_b_id
+                        join_query = sql.SQL(
+                            """
+                            SELECT *
+                            FROM {}
+                            JOIN {} ON {}.{} = {}.{}
+                            JOIN {} ON {}.{} = {}.{}
+                            """
+                        ).format(
+                            sql.Identifier(table_a),
+                            sql.Identifier(table_b),
+                            sql.Identifier(table_a),
+                            sql.Identifier(table_a_id),
+                            sql.Identifier(table_b),
+                            sql.Identifier(table_b_id),
+                            sql.Identifier(table_c),
+                            sql.Identifier(table_b),
+                            sql.Identifier(table_b_id),
+                            sql.Identifier(table_c),
+                            sql.Identifier(table_c_id)
+                        )
+                        cur.execute(join_query)
+                        result = cur.fetchall()
+                except Exception as e:
+                    print(f"Error in join function {e}")
+                
+        self.connection.close()
+        return result
+    
+    def join_table_select_all(self, table_a, table_b, table_a_id, table_b_id = None, table_c = None, table_c_id = None):
         result = []
         if table_b_id == None:
             table_b_id = table_a_id
