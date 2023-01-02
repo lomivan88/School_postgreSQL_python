@@ -1,5 +1,5 @@
 from utils.data_model import PostgreHandler
-from utils.controler_school import ControllerSchool
+from utils.controller_school import ControllerSchool
 
 postgre_model = PostgreHandler(
     database="postgres", 
