@@ -59,7 +59,7 @@ def delete_stundent():
         deleted_student = school_sys.delete_student(student_id=student_id)
         print(f"Student was deleted: {deleted_student}")
     except TypeError as e:
-        print("Student id must be interger!")
+        print("Student id must be integer!")
     
 if __name__ == "__main__":
     
@@ -67,6 +67,8 @@ if __name__ == "__main__":
         print_menu()
         try:
             menu_choice = int(input("Your choice: "))
+            if menu_choice < 0 or menu_choice > 7 :
+                print("Choice out of range!")
         except TypeError as e:
             print("Please type the number from menu!")
 
@@ -88,21 +90,4 @@ if __name__ == "__main__":
             break
         else:
             cls()
-    # students = school_controller.get_students()
-    # teachers = school_controller.get_teachers()
-    # items = school_controller.get_items()
-    # print(students)
-    # print(teachers)
-    # school_controller.create_item({"item_name":"Czech Language", "teacher_id": 3, "description": "Firt level"})
-    # print(items)
-    # student = school_controller.create_student({"first_name": "Franta", "second_name": "Maly", "date_of_birth": '1999-12-05', "gender": "M"})
-    # students = school_controller.get_students()
-    # for student in students:
-    #     print(student)
-    # updated_student = school_controller.update_student("second_name", "Vancura", "student_id", 1)
-    # students = school_controller.get_students()
-    # print(students)
-    # deleted_student = school_controller.delete_student(4)
-    # students = school_controller.get_students()
-    # print(students)
     
