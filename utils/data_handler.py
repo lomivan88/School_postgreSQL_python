@@ -46,7 +46,7 @@ class PostgreHandler:
     
     def get_data_all(self, table):
         result = []
-        if self.connection == None or self.connection.closed():
+        if self.connection == None or self.connection.closed:
             self.connect()
         try:
             with self.connection, self.connection.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
@@ -103,64 +103,6 @@ class PostgreHandler:
             print(f"Error during get_data {e}")
         self.connection.close()
         return result    
-    
-    def join_table_select_dict(self, table_a, table_b, table_a_id, table_b_id = None, table_c = None, table_c_id = None):
-        result = []
-        if table_b_id == None:
-            table_b_id = table_a_id
-        
-        if self.connection == None or self.connection.closed:
-            self.connect()
-        
-        with self.connection, self.connection.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
-                try:
-                    if table_c == None:
-                        join_query = sql.SQL(
-                            """
-                            SELECT *
-                            FROM {}
-                            JOIN {} ON {}.{} = {}.{}
-                            """
-                        ).format(
-                            sql.Identifier(table_a),
-                            sql.Identifier(table_b),
-                            sql.Identifier(table_a),
-                            sql.Identifier(table_a_id),
-                            sql.Identifier(table_b),
-                            sql.Identifier(table_b_id)
-                        )
-                        cur.execute(join_query)
-                        result = cur.fetchall()
-                    else:
-                        if table_c_id == None:
-                            table_c_id = table_b_id
-                        join_query = sql.SQL(
-                            """
-                            SELECT *
-                            FROM {}
-                            JOIN {} ON {}.{} = {}.{}
-                            JOIN {} ON {}.{} = {}.{}
-                            """
-                        ).format(
-                            sql.Identifier(table_a),
-                            sql.Identifier(table_b),
-                            sql.Identifier(table_a),
-                            sql.Identifier(table_a_id),
-                            sql.Identifier(table_b),
-                            sql.Identifier(table_b_id),
-                            sql.Identifier(table_c),
-                            sql.Identifier(table_b),
-                            sql.Identifier(table_b_id),
-                            sql.Identifier(table_c),
-                            sql.Identifier(table_c_id)
-                        )
-                        cur.execute(join_query)
-                        result = cur.fetchall()
-                except Exception as e:
-                    print(f"Error in join function {e}")
-                
-        self.connection.close()
-        return result
     
     def join_table_select_all(self, table_a, table_b, table_a_id, table_b_id = None, table_c = None, table_c_id = None):
         result = []
@@ -219,6 +161,68 @@ class PostgreHandler:
                 
         self.connection.close()
         return result
+    
+    def update_item(self, table:str, set_column, set_value, condition_column:str, condition_value, ):
+        if self.connection == None or self.connection.closed:
+            self.connect()
+        update_return = []    
+        with self.connection, self.connection.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
+            try: 
+                
+                update_query = sql.SQL(
+                    """
+                    UPDATE {}
+                    SET {} = {}
+                    WHERE {} = {}
+                    RETURNING *
+                    """
+                ).format(
+                    sql.Identifier(table),
+                    sql.Identifier(set_column),
+                    sql.Literal(set_value),
+                    sql.Identifier(condition_column),
+                    sql.Literal(condition_value)
+                )
+                if self.debug == True:
+                    print(update_query.as_string(cur))
+                cur.execute(update_query)
+                update_return = cur.fetchone()
+            except Exception as e:
+                print(f"Error in update function {e}!")
+                
+        self.connection.close()
+        return update_return
+    
+    def delete_item(self, table:str, set_column, set_value, condition_column:str, condition_value, ):
+        if self.connection == None or self.connection.closed:
+            self.connect()
+        update_return = []    
+        with self.connection, self.connection.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
+            try: 
+                
+                update_query = sql.SQL(
+                    """
+                    UPDATE {}
+                    SET {} = {}
+                    WHERE {} = {}
+                    RETURNING *
+                    """
+                ).format(
+                    sql.Identifier(table),
+                    sql.Identifier(set_column),
+                    sql.Literal(set_value),
+                    sql.Identifier(condition_column),
+                    sql.Literal(condition_value)
+                )
+                print(update_query.as_string(cur))
+                cur.execute(update_query)
+                update_return = cur.fetchone()
+            except Exception as e:
+                print(f"Error in update function {e}!")
+                
+        self.connection.close()
+        return update_return
+        
         
         
     
