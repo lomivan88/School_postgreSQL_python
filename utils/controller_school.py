@@ -27,6 +27,10 @@ class ControllerSchool:
         returning_text = self.pg_model.insert_data("items", data)
         return returning_text
     
-    def update_data(self, table, s_column, s_value, by_column, column_value):
-        returning_text = self.pg_model.update_item(table, s_column, s_value, by_column, column_value)
+    def update_student(self, s_column, s_value, by_column, column_value):
+        returning_text = self.pg_model.update_item("students", s_column, s_value, by_column, column_value)
+        return returning_text
+    
+    def delete_student(self, student_id):
+        returning_text = self.pg_model.delete_item("students", "student_id", student_id)
         return returning_text

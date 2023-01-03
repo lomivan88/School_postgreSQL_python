@@ -10,6 +10,7 @@ postgre_model = PostgreHandler(
 school_controller = ControllerSchool(postgre_model)
 
 if __name__ == "__main__":
+    pass
     # students = school_controller.get_students()
     # teachers = school_controller.get_teachers()
     # items = school_controller.get_items()
@@ -21,7 +22,10 @@ if __name__ == "__main__":
     # students = school_controller.get_students()
     # for student in students:
     #     print(student)
-    # updated_student = school_controller.update_data("students","second_name", "Vancura", "student_id", 1)
-    # students = school_controller.get_students()
-    # print(students)
+    updated_student = school_controller.update_student("second_name", "Vancura", "student_id", 1)
+    students = school_controller.get_students()
+    print(students)
+    deleted_student = school_controller.delete_student(4)
+    students = school_controller.get_students()
+    print(students)
     

@@ -82,7 +82,6 @@ class PostgreHandler:
                         sql.SQL(',').join(map(sql.Identifier,columns)),
                         sql.Identifier(table)
                     )
-                    # print(select_query.as_string(cur))
                 else:
                     select_query = sql.SQL(
                         """
@@ -96,6 +95,7 @@ class PostgreHandler:
                         sql.Identifier(condition_column),
                         sql.Literal(condition_value)
                     )
+                if self.debug == True:
                     print(select_query.as_string(cur))
                 cur.execute(select_query)
                 result = cur.fetchall()
@@ -193,35 +193,32 @@ class PostgreHandler:
         self.connection.close()
         return update_return
     
-    def delete_item(self, table:str, set_column, set_value, condition_column:str, condition_value, ):
+    def delete_item(self, table:str, condition_column:str, condition_value ):
         if self.connection == None or self.connection.closed:
             self.connect()
-        update_return = []    
+        delete_return = []    
         with self.connection, self.connection.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
-            try: 
-                
-                update_query = sql.SQL(
+            try:  
+                delete_query = sql.SQL(
                     """
-                    UPDATE {}
-                    SET {} = {}
+                    DELETE FROM {}
                     WHERE {} = {}
                     RETURNING *
                     """
                 ).format(
                     sql.Identifier(table),
-                    sql.Identifier(set_column),
-                    sql.Literal(set_value),
                     sql.Identifier(condition_column),
                     sql.Literal(condition_value)
                 )
-                print(update_query.as_string(cur))
-                cur.execute(update_query)
-                update_return = cur.fetchone()
+                if self.debug == True:
+                    print(delete_query.as_string(cur))
+                cur.execute(delete_query)
+                delete_return = cur.fetchone()
             except Exception as e:
                 print(f"Error in update function {e}!")
                 
         self.connection.close()
-        return update_return
+        return delete_return
         
         
         
