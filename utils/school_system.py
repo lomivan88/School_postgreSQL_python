@@ -1,6 +1,6 @@
 from .data_handler import PostgreHandler
 
-class ControllerSchool:
+class SchoolSystem:
     def __init__(self, pg_model: PostgreHandler):
         self.pg_model = pg_model
         
@@ -9,7 +9,7 @@ class ControllerSchool:
         return students
     
     def get_teachers(self):
-        teachers = self.pg_model.get_data("teachers",["first_name", "second_name", "title"])
+        teachers = self.pg_model.get_data_all("teachers")
         return teachers
     
     def get_items(self):
